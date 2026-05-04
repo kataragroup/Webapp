@@ -1,0 +1,6 @@
+{
+  "name": "GoYatre",
+  "description": "A comprehensive taxi fleet platform supporting Passengers, Drivers, Car Owners, and Admins with real-time tracking, KYC verification, and commission management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

@@ -1,0 +1,171 @@
+import React from 'react';
+import { 
+  BrowserRouter as Router, 
+  Routes, 
+  Route, 
+  Navigate 
+} from 'react-router-dom';
+import Welcome from './pages/auth/Welcome';
+import SplashScreen from './pages/auth/SplashScreen';
+import Login from './pages/auth/Login';
+import SignUp from './pages/auth/SignUp';
+import SessionExpired from './pages/auth/SessionExpired';
+import UserDashboard from './pages/user/Dashboard';
+import RideSelection from './pages/user/RideSelection';
+import RideDetails from './pages/user/RideDetails';
+import Payment from './pages/user/Payment';
+import Wallet from './pages/user/Wallet';
+import Feedback from './pages/user/Feedback';
+import Profile from './pages/user/Profile';
+import Settings from './pages/user/Settings';
+import AddressBook from './pages/user/AddressBook';
+import BookingConfirmation from './pages/user/BookingConfirmation';
+import Complaint from './pages/user/Complaint';
+import RideHistoryPage from './pages/user/RideHistory';
+import DriverDashboard from './pages/driver/Dashboard';
+import DriverWallet from './pages/driver/Wallet';
+import KYCList from './pages/driver/KYCList';
+import AadhaarUpload from './pages/driver/AadhaarUpload';
+import PANUpload from './pages/driver/PANUpload';
+import VehicleDetails from './pages/driver/VehicleDetails';
+import PhotoUpload from './pages/driver/PhotoUpload';
+import DriverBank from './pages/driver/Bank';
+import DriverRatings from './pages/driver/Ratings';
+import DriverSupport from './pages/driver/Support';
+import DriverLogin from './pages/driver/DriverLogin';
+import DriverSignUp from './pages/driver/DriverSignUp';
+import OwnerLogin from './pages/owner/OwnerLogin';
+import AdminDashboard from './pages/admin/Dashboard';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminDrivers from './pages/admin/AdminDrivers';
+import AdminKYC from './pages/admin/AdminKYC';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminRides from './pages/admin/AdminRides';
+import AdminTracking from './pages/admin/AdminTracking';
+import AdminPayments from './pages/admin/AdminPayments';
+import AdminEarnings from './pages/admin/AdminEarnings';
+import AdminIncentives from './pages/admin/AdminIncentives';
+import AdminReports from './pages/admin/AdminReports';
+import AdminNotifications from './pages/admin/AdminNotifications';
+import AdminSupport from './pages/admin/AdminSupport';
+import OwnerDashboard from './pages/owner/Dashboard';
+import OwnerKYC from './pages/owner/KYC';
+import OwnerVehicles from './pages/owner/Vehicles';
+
+import { authService } from './services/authService';
+
+// --- PROTECTED ROUTE COMPONENT ---
+function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: 'user' | 'driver' | 'admin' | 'owner' }) {
+  const user = authService.getCurrentUser();
+  
+  if (!user) {
+    if (role === 'admin') return <Navigate to="/admin/login" replace />;
+    if (role === 'driver') return <Navigate to="/driver/login" replace />;
+    if (role === 'owner') return <Navigate to="/owner/login" replace />;
+    return <Navigate to="/login" replace />;
+  }
+
+  if (role && user.role !== role) {
+    if (user.role === 'admin') return <Navigate to="/admin" replace />;
+    if (user.role === 'driver') return <Navigate to="/driver" replace />;
+    if (user.role === 'owner') return <Navigate to="/owner" replace />;
+    return <Navigate to="/user" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+// --- DYNAMIC DASHBOARD REDIRECTOR ---
+function DashboardRedirect() {
+  const user = authService.getCurrentUser();
+  if (!user) return <Navigate to="/login" replace />;
+  
+  if (user.role === 'admin') return <Navigate to="/admin" replace />;
+  if (user.role === 'driver') return <Navigate to="/driver" replace />;
+  if (user.role === 'owner') return <Navigate to="/owner" replace />;
+  return <Navigate to="/user" replace />;
+}
+
+// --- MOBILE CONTAINER WRAPPER ---
+function MobileContainer({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="h-screen bg-[#050B0C] flex justify-center overflow-x-hidden overflow-y-auto">
+      <div className="w-full bg-[#0D1B1E] relative min-h-screen shadow-2xl transition-all duration-300 overflow-x-hidden overflow-y-auto">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        {/* Admin Routes - Bypassing Mobile Container for full desktop experience */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute role="admin"><AdminUsers /></ProtectedRoute>} />
+        <Route path="/admin/drivers" element={<ProtectedRoute role="admin"><AdminDrivers /></ProtectedRoute>} />
+        <Route path="/admin/kyc" element={<ProtectedRoute role="admin"><AdminKYC /></ProtectedRoute>} />
+        <Route path="/admin/rides" element={<ProtectedRoute role="admin"><AdminRides /></ProtectedRoute>} />
+        <Route path="/admin/tracking" element={<ProtectedRoute role="admin"><AdminTracking /></ProtectedRoute>} />
+        <Route path="/admin/payments" element={<ProtectedRoute role="admin"><AdminPayments /></ProtectedRoute>} />
+        <Route path="/admin/earnings" element={<ProtectedRoute role="admin"><AdminEarnings /></ProtectedRoute>} />
+        <Route path="/admin/incentives" element={<ProtectedRoute role="admin"><AdminIncentives /></ProtectedRoute>} />
+        <Route path="/admin/reports" element={<ProtectedRoute role="admin"><AdminReports /></ProtectedRoute>} />
+        <Route path="/admin/notifications" element={<ProtectedRoute role="admin"><AdminNotifications /></ProtectedRoute>} />
+        <Route path="/admin/support" element={<ProtectedRoute role="admin"><AdminSupport /></ProtectedRoute>} />
+        <Route path="/admin/settings" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
+
+        {/* Global Dashboard Redirect */}
+        <Route path="/dashboard" element={<DashboardRedirect />} />
+
+        {/* Other apps in Mobile Container */}
+        <Route path="*" element={
+          <MobileContainer>
+            <Routes>
+              <Route path="/" element={<SplashScreen />} />
+              <Route path="/welcome" element={<Welcome />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/session-expired" element={<SessionExpired />} />
+              <Route path="/driver/login" element={<DriverLogin />} />
+              <Route path="/driver/signup" element={<DriverSignUp />} />
+              <Route path="/owner/login" element={<OwnerLogin />} />
+
+              <Route path="/user" element={<ProtectedRoute role="user"><UserDashboard /></ProtectedRoute>} />
+              <Route path="/user/select" element={<ProtectedRoute role="user"><RideSelection /></ProtectedRoute>} />
+              <Route path="/user/ride/:id" element={<ProtectedRoute role="user"><RideDetails /></ProtectedRoute>} />
+              <Route path="/user/payment" element={<ProtectedRoute role="user"><Payment /></ProtectedRoute>} />
+              <Route path="/user/feedback" element={<ProtectedRoute role="user"><Feedback /></ProtectedRoute>} />
+              <Route path="/user/wallet" element={<ProtectedRoute role="user"><Wallet /></ProtectedRoute>} />
+              <Route path="/user/history" element={<ProtectedRoute role="user"><RideHistoryPage /></ProtectedRoute>} />
+              <Route path="/user/profile" element={<ProtectedRoute role="user"><Profile /></ProtectedRoute>} />
+              <Route path="/user/settings" element={<ProtectedRoute role="user"><Settings /></ProtectedRoute>} />
+              <Route path="/user/address-book" element={<ProtectedRoute role="user"><AddressBook /></ProtectedRoute>} />
+              <Route path="/user/booking-confirmation" element={<ProtectedRoute role="user"><BookingConfirmation /></ProtectedRoute>} />
+              <Route path="/user/complaints" element={<ProtectedRoute role="user"><Complaint /></ProtectedRoute>} />
+
+              <Route path="/driver" element={<ProtectedRoute role="driver"><DriverDashboard /></ProtectedRoute>} />
+              <Route path="/driver/kyc" element={<ProtectedRoute role="driver"><KYCList /></ProtectedRoute>} />
+              <Route path="/driver/kyc/aadhaar" element={<ProtectedRoute role="driver"><AadhaarUpload /></ProtectedRoute>} />
+              <Route path="/driver/kyc/pan" element={<ProtectedRoute role="driver"><PANUpload /></ProtectedRoute>} />
+              <Route path="/driver/kyc/vehicle" element={<ProtectedRoute role="driver"><VehicleDetails /></ProtectedRoute>} />
+              <Route path="/driver/kyc/photo" element={<ProtectedRoute role="driver"><PhotoUpload /></ProtectedRoute>} />
+              <Route path="/driver/wallet" element={<ProtectedRoute role="driver"><DriverWallet /></ProtectedRoute>} />
+              <Route path="/driver/bank" element={<ProtectedRoute role="driver"><DriverBank /></ProtectedRoute>} />
+              <Route path="/driver/ratings" element={<ProtectedRoute role="driver"><DriverRatings /></ProtectedRoute>} />
+              <Route path="/driver/support" element={<ProtectedRoute role="driver"><DriverSupport /></ProtectedRoute>} />
+
+              <Route path="/owner" element={<ProtectedRoute role="owner"><OwnerDashboard /></ProtectedRoute>} />
+              <Route path="/owner/kyc" element={<ProtectedRoute role="owner"><OwnerKYC /></ProtectedRoute>} />
+              <Route path="/owner/vehicles" element={<ProtectedRoute role="owner"><OwnerVehicles /></ProtectedRoute>} />
+
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </MobileContainer>
+        } />
+      </Routes>
+    </Router>
+  );
+}

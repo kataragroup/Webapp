@@ -1,0 +1,100 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Standard passenger profile",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "profileImage": { "type": "string" },
+        "walletBalance": { "type": "number" },
+        "role": { "type": "string", "enum": ["user"] },
+        "status": { "type": "string", "enum": ["active", "suspended"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "phone", "role", "createdAt"]
+    },
+    "Driver": {
+      "title": "Driver",
+      "description": "Vehicle operator profile",
+      "type": "object",
+      "properties": {
+        "driverId": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "driverType": { "type": "string", "enum": ["OWNER_DRIVER", "FREELANCE_DRIVER"] },
+        "ownerId": { "type": "string" },
+        "vehicleId": { "type": "string" },
+        "status": { "type": "string", "enum": ["ONLINE", "OFFLINE", "BUSY"] },
+        "rating": { "type": "number" },
+        "isKycVerified": { "type": "boolean" },
+        "walletBalance": { "type": "number" },
+        "cashCollected": { "type": "number" },
+        "cashLimit": { "type": "number" },
+        "role": { "type": "string", "enum": ["driver"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["driverId", "name", "phone", "role", "createdAt"]
+    },
+    "CarOwner": {
+      "title": "CarOwner",
+      "description": "Vehicle owner/fleet manager",
+      "type": "object",
+      "properties": {
+        "ownerId": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "verificationStatus": { "type": "string", "enum": ["PENDING", "VERIFIED", "REJECTED"] },
+        "role": { "type": "string", "enum": ["owner"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerId", "name", "phone", "role", "createdAt"]
+    },
+    "Vehicle": {
+      "title": "Vehicle",
+      "description": "Registered taxi vehicle",
+      "type": "object",
+      "properties": {
+        "vehicleId": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "driverId": { "type": "string" },
+        "vehicleNumber": { "type": "string" },
+        "vehicleType": { "type": "string", "enum": ["Mini", "Sedan", "SUV"] },
+        "model": { "type": "string" },
+        "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE", "MAINTENANCE"] }
+      },
+      "required": ["vehicleId", "ownerId", "vehicleNumber", "vehicleType"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "Ride request and trip details",
+      "type": "object",
+      "properties": {
+        "bookingId": { "type": "string" },
+        "userId": { "type": "string" },
+        "driverId": { "type": "string" },
+        "status": { "type": "string", "enum": ["PENDING", "ACCEPTED", "PICKED_UP", "COMPLETED", "CANCELLED"] },
+        "pickup": { "type": "object" },
+        "drop": { "type": "object" },
+        "fare": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["CASH", "ONLINE"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["bookingId", "userId", "pickup", "drop", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": { "schema": "User", "description": "User profiles" },
+    "/drivers/{driverId}": { "schema": "Driver", "description": "Driver profiles" },
+    "/carOwners/{ownerId}": { "schema": "CarOwner", "description": "Car owner profiles" },
+    "/admins/{adminId}": { "schema": "User", "description": "Admin profiles" },
+    "/vehicles/{vehicleId}": { "schema": "Vehicle", "description": "Vehicle registry" },
+    "/bookings/{bookingId}": { "schema": "Booking", "description": "Ride bookings" }
+  }
+}

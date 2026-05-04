@@ -1,0 +1,133 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // Global Helpers
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isAdmin() { 
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == "chaurasiyanchal07@gmail.com"
+      ); 
+    }
+
+    // User Rules
+    match /users/{userId} {
+      function isValidUser(data) {
+        return (data.userId == request.auth.uid || data.id == request.auth.uid) &&
+               data.name is string && data.name.size() > 0 &&
+               data.role == "user" &&
+               (data.walletBalance is number || !('walletBalance' in data));
+      }
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if true; // Allow checking for existing users during registration (Note: In production, consider a more restrictive pattern or Cloud Function)
+      allow create: if isOwner(userId) && isValidUser(incoming());
+      allow update: if isOwner(userId) && isValidUser(incoming()) && 
+                    incoming().diff(existing()).affectedKeys().hasOnly(['name', 'phone', 'profileImage', 'avatar', 'location']);
+    }
+
+    // Driver Rules
+    match /drivers/{driverId} {
+      function isValidDriver(data) {
+        return (data.driverId == request.auth.uid || data.id == request.auth.uid) &&
+               data.role == "driver" &&
+               (data.cashCollected is number || !('cashCollected' in data));
+      }
+      allow get: if isSignedIn(); 
+      allow list: if true;
+      allow create: if isOwner(driverId) && isValidDriver(incoming());
+      allow update: if (isOwner(driverId) || isAdmin()) && 
+                    isValidDriver(incoming()) &&
+                    (isAdmin() || incoming().diff(existing()).affectedKeys().hasOnly(['status', 'onlineStatus', 'lastActiveAt', 'isOnline', 'location', 'avatar']));
+    }
+
+    // Car Owner Rules
+    match /carOwners/{ownerId} {
+      function isValidCarOwner(data) {
+        return (data.ownerId == request.auth.uid || data.id == request.auth.uid) &&
+               data.role == "owner";
+      }
+      allow get: if isOwner(ownerId) || isAdmin();
+      allow list: if true;
+      allow create: if isOwner(ownerId) && isValidCarOwner(incoming());
+      allow update: if (isOwner(ownerId) || isAdmin()) && 
+                    isValidCarOwner(incoming()) &&
+                    (isAdmin() || incoming().diff(existing()).affectedKeys().hasOnly(['name', 'address', 'phone', 'avatar', 'location']));
+    }
+
+    // Vehicles
+    match /vehicles/{vehicleId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() || (isSignedIn() && exists(/databases/$(database)/documents/carOwners/$(request.auth.uid)));
+    }
+
+    // Bookings
+    match /bookings/{bookingId} {
+      allow read: if isSignedIn() && (isOwner(existing().userId) || isOwner(existing().driverId) || isAdmin());
+      allow create: if isSignedIn() && incoming().userId == request.auth.uid;
+      allow update: if isSignedIn() && (
+        isOwner(existing().userId) || 
+        isOwner(existing().driverId) || 
+        isAdmin()
+      );
+    }
+    
+    // Wallets & Transactions
+    match /wallets/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isAdmin(); // Only system/admin can update balance
+    }
+    
+    match /walletTransactions/{txId} {
+      allow read: if isOwner(existing().userId) || isAdmin();
+      allow create: if isAdmin();
+    }
+
+    // Settings (Admin Only)
+    match /fareSettings/{type} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /commissionSettings/{type} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Ratings
+    match /ratings/{ratingId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isOwner(incoming().userId);
+    }
+
+    // Locations
+    match /driverLocations/{driverId} {
+      allow read: if true;
+      allow write: if isOwner(driverId) || isAdmin();
+    }
+
+    // Support & Notifications
+    match /supportTickets/{id} {
+      allow read, write: if isOwner(incoming().userId) || isOwner(existing().userId) || isAdmin();
+    }
+    
+    match /notifications/{id} {
+      allow read: if isOwner(existing().userId) || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Admin list
+    match /admins/{adminId} {
+        allow read: if true;
+        allow write: if adminId == 'system-admin-node';
+    }
+  }
+}
