@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # GoYatree - Modern Ride-Sharing Platform
 
 GoYatree is a full-stack, production-ready ride-sharing application designed for seamless transportation management. It provides a unified experience for passengers, drivers, and administrators.
@@ -134,3 +135,6 @@ The project follows a modern monorepo-lite structure, with a Vite-powered React 
 - **High-Security KYC**: Multi-step verification for driver onboarding with encrypted storage.
 - **Mesh UI**: Distinctive visual design using gradients, glassmorphism, and custom animations.
 - **Responsiveness**: Fully adaptive layouts for mobile and desktop views with a mobile-first philosophy.
+=======
+# Webapp
+>>>>>>> 12fa3f57919cb6f8ab522b2d40a47ada25a599f5
