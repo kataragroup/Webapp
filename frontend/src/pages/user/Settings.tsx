@@ -96,7 +96,7 @@ export default function Settings() {
     <div className="min-h-screen bg-[#0D1B1E] text-white pb-32 font-sans overflow-x-hidden">
       <Header onMenuClick={() => {}} showBack={true} theme="dark" title="Control Panel" />
 
-      <div className="px-6 space-y-12 mt-10 container mx-auto lg:max-w-4xl">
+      <div className="px-6 space-y-12 pt-24 mt-10 container mx-auto lg:max-w-4xl">
         <div className="bg-gradient-to-r from-blue-500/10 to-emerald-500/10 border border-white/5 rounded-[40px] p-8 relative overflow-hidden backdrop-blur-3xl shadow-2xl">
            <div className="absolute top-0 right-0 p-8 opacity-10">
               <LogOut size={120} />

@@ -51,7 +51,7 @@ export default function Feedback() {
     <div className="min-h-screen bg-[#0D1B1E] text-white pb-32 font-sans overflow-x-hidden">
       <Header onMenuClick={() => {}} showBack={true} theme="dark" title="Network Feedback" />
 
-      <div className="px-6 space-y-12 mt-10 container mx-auto lg:max-w-3xl">
+      <div className="px-6 space-y-12 pt-24 mt-10 container mx-auto lg:max-w-3xl">
         <div className="text-center space-y-4">
            <h2 className="text-4xl font-black italic uppercase tracking-tighter leading-none">Experience Protocol</h2>
            <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] leading-none text-center">Quantify your interaction with the Go-Yatree infrastructure</p>

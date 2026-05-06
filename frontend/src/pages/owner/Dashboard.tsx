@@ -43,7 +43,7 @@ export default function OwnerDashboard() {
         subtitle="Command Hub" 
       />
 
-      <main className="p-6 pb-24 max-w-lg mx-auto lg:max-w-7xl">
+      <main className="p-6 pt-24 pb-24 max-w-lg mx-auto lg:max-w-7xl">
         <FleetReportCard />
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

@@ -71,7 +71,7 @@ The project follows a modern monorepo-lite structure, with a Vite-powered React 
 
 ### 🛡️ Admin Dashboard (`/admin`)
 **How to login:**
-- Navigate to `/admin/login`.
+- Navigate to `http://localhost:3000/admin/login`.
 - **Credentials**: `admin@system.node` / `GoYatariUser@2025`.
 - **Features**:
   - **KYC Verification**: Approve or reject driver documents in real-time.

@@ -9,7 +9,7 @@ export default function Wallet() {
     <div className="min-h-screen bg-[#0D1B1E] text-white pb-32">
        <Header onMenuClick={() => {}} showBack={true} theme="dark" title="Settlement Node" />
 
-       <div className="px-6 space-y-12 mt-10 container mx-auto lg:max-w-xl">
+       <div className="px-6 space-y-12 pt-24 mt-10 container mx-auto lg:max-w-xl">
          <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-[48px] p-10 shadow-2xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-110 transition-transform">
                <TrendingUp size={120} />

@@ -15,12 +15,12 @@ export const DashboardRideCard = ({ ride, onCancelClick }: DashboardRideCardProp
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="bg-[#1A1A1A] border border-white/10 rounded-[28px] p-6 space-y-6"
+      className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[28px] p-6 space-y-6 shadow-xl"
     >
       <div onClick={() => navigate('/user/ride/status')} className="cursor-pointer space-y-6">
         <div className="flex justify-between items-center text-sm">
           <span className="text-white/60 font-medium">{ride.date} | {ride.time}</span>
-          <span className="text-white font-medium uppercase tracking-wider bg-white/10 px-3 py-1 rounded-full text-[10px]">
+          <span className="text-white font-medium uppercase tracking-wider bg-white/10 border border-white/5 px-3 py-1 rounded-full text-[10px] backdrop-blur-md">
             {ride.status}
           </span>
         </div>

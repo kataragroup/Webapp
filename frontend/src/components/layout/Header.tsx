@@ -35,8 +35,8 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className={`flex items-center justify-between p-6 pt-8 backdrop-blur-xl sticky top-0 z-40 border-b ${
-      isDark ? 'bg-[#0D1B1E]/80 border-white/5' : 'bg-white/80 border-zinc-100/50'
+    <header className={`flex items-center justify-between p-6 pt-8 backdrop-blur-2xl fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
+      isDark ? 'bg-black/40 border-white/10' : 'bg-white/70 border-zinc-100/50'
     }`}>
       <div className="flex items-center">
         {showBack ? (
@@ -80,11 +80,11 @@ export const Header: React.FC<HeaderProps> = ({
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              className={`absolute right-0 top-16 w-64 rounded-3xl border shadow-2xl p-4 overflow-hidden z-50 ${
-                isDark ? 'bg-[#1a2a2d] border-white/10 text-white' : 'bg-white border-zinc-100 text-black'
+              className={`absolute right-0 top-16 w-64 rounded-3xl border shadow-2xl p-4 overflow-hidden z-50 backdrop-blur-3xl ${
+                isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-white/90 border-zinc-100 text-black'
               }`}
             >
-              <div className="p-4 border-b border-white/5 mb-2">
+              <div className="p-4 border-b border-white/10 mb-2">
                 <p className="text-xs font-black italic uppercase tracking-tighter">{user?.name || 'Authorized Client'}</p>
                 <p className="text-[8px] font-black text-white/20 uppercase tracking-widest font-mono mt-1">ID: {user?.id?.slice(0, 8)}</p>
               </div>

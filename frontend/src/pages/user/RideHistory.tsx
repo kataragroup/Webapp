@@ -45,7 +45,7 @@ export default function RideHistoryPage() {
     <div className="min-h-screen bg-[#0D1B1E] text-white pb-32 font-sans overflow-x-hidden">
       <Header onMenuClick={() => {}} showBack={true} theme="dark" title="Transit Logs" />
 
-      <div className="px-6 space-y-10 mt-8 container mx-auto lg:max-w-4xl">
+      <div className="px-6 space-y-10 pt-24 mt-8 container mx-auto lg:max-w-4xl">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
            <div className="space-y-2">
               <h1 className="text-4xl font-black italic uppercase italic tracking-tighter leading-none">Transit History</h1>

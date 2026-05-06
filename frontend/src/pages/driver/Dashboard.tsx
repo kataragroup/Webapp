@@ -145,7 +145,7 @@ export default function DriverDashboard() {
 
       <Header onMenuClick={() => setIsSidebarOpen(true)} theme="dark" />
 
-      <main className="container mx-auto px-6 py-6 lg:py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
+      <main className="container mx-auto px-6 pt-24 py-6 lg:py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
         
         {/* Left Column: Profile & Duty Control */}
         <div className="lg:col-span-4 space-y-8">

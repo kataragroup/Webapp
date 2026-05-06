@@ -25,10 +25,10 @@ export const CancelRideModal = ({ isOpen, onClose, onConfirm, isCancelling }: Ca
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            className="relative w-full max-w-sm bg-[#1A1A1A] border border-white/10 rounded-[32px] p-8 shadow-2xl"
+            className="relative w-full max-w-sm bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[40px] p-8 shadow-[0_32px_64px_rgba(0,0,0,0.5)]"
           >
             <div className="flex flex-col items-center text-center gap-6">
-              <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center">
+              <div className="w-20 h-20 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center">
                 <AlertCircle size={40} className="text-red-500" />
               </div>
               

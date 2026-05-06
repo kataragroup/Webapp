@@ -61,9 +61,12 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean, onClose: () => v
       )}
       
       {/* Sidebar */}
-      <div className={`fixed top-0 left-0 h-full w-80 bg-[#0d1b1e] border-r border-white/5 z-50 transform transition-transform duration-500 ease-out shadow-2xl ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="p-8 h-full flex flex-col">
-          <div className="flex items-center justify-between mb-12">
+      <div className={`fixed top-0 left-0 h-full w-80 bg-white/5 backdrop-blur-3xl border-r border-white/10 z-50 transform transition-transform duration-500 ease-out shadow-2xl ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-8 h-full flex flex-col relative overflow-hidden">
+          {/* Decorative background for sidebar */}
+          <div className="absolute top-[-10%] right-[-10%] w-32 h-32 bg-[#00E054]/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="flex items-center justify-between mb-12 relative z-10">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 bg-[#00E054]/10 border border-[#00E054]/20 rounded-xl flex items-center justify-center text-[#00E054]">
                 <Car size={24} />

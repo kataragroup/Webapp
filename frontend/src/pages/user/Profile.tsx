@@ -43,7 +43,7 @@ export default function Profile() {
     <div className="min-h-screen bg-[#0D1B1E] text-white pb-32 font-sans overflow-x-hidden">
       <Header onMenuClick={() => {}} showBack={true} theme="dark" title="Profile Node" />
 
-      <div className="px-6 space-y-12 mt-10 container mx-auto lg:max-w-4xl">
+      <div className="px-6 space-y-12 pt-24 mt-10 container mx-auto lg:max-w-4xl">
         <div className="relative flex flex-col items-center gap-6">
            <div className="relative group">
               <div className="w-32 h-32 rounded-[40px] bg-white/5 border border-white/10 overflow-hidden shadow-2xl transition-all group-hover:border-[#00E054]/50">
