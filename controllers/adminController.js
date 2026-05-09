@@ -58,7 +58,7 @@ exports.register = async (req, res) => {
   });
 };
 
-/*
+
 // DASHBOARD
 exports.dashboard = async (req, res) => {
   const users = await User.countDocuments();
@@ -107,4 +107,3 @@ exports.getRides = async (req, res) => {
     .populate('driverId');
   res.json(rides);
 }; 
-*/
