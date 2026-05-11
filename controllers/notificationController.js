@@ -25,7 +25,10 @@ exports.getMyNotifications = async (req, res) => {
 // ====================== SAVE FCM TOKEN ======================
 exports.saveFcmToken = async (req, res) => {
   try {
-    console.log("Saving FCM Token... Body:", req.body);
+    console.log("=== SAVE FCM TOKEN CALLED ===");
+    console.log("Auth Header:", req.headers.authorization ? "Present" : "Missing");
+    console.log("Body:", req.body);   
+    
     const response = await axios.post(
       `${NOTIFICATION_BASE_URL}/save-token`,
       req.body,
@@ -37,8 +40,12 @@ exports.saveFcmToken = async (req, res) => {
     );
     res.json(response.data);
   } catch (error) {
-    console.error("Save FCM Token Error:", error.response?.data || error.message);
-    
+
+    console.error(" SAVE FCM TOKEN FAILED:");
+    console.error("Status:", error.response?.status);
+    console.error("Error:", error.response?.data || error.message);
+    console.error("Code:", error.code);
+
     res.status(500).json({
       success: false,
       message: "Failed to save FCM token",
