@@ -7,4 +7,6 @@ router.post('/call', callCtrl.makeCall);           // → /api/web/call/call
 
 router.post('/twiml', callCtrl.twimlResponse);     // → /api/web/call/twiml
 
+router.post('/masked-call', callCtrl.initiateMaskedCall);
+
 module.exports = router;

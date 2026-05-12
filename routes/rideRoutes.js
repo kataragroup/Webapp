@@ -11,4 +11,6 @@ router.get('/:id', rideCtrl.getRideDetails);
 
 router.post('/:rideId/pay', rideCtrl.payForRide);
 
+router.post('/cancel', rideCtrl.cancelRide);
+
 module.exports = router;

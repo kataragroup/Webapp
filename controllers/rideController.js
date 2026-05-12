@@ -22,10 +22,11 @@ exports.getActiveRide = async (req, res) => {
 exports.getRideHistory = async (req, res) => {
   try {
 
-    const response = await axios.get(`${RIDE_BASE_URL}/history`, {
+    const response = await axios.get(`${RIDE_BASE_URL}/history`,
+    {
       headers: { Authorization: req.headers.authorization }
     });
-
+    //console.log("Ride History Response:", response.data);
     res.json(response.data);
   } catch (error) {
     //console.error(" Ride History Error:", error.response?.data || error.message);
@@ -41,7 +42,9 @@ exports.getRideHistory = async (req, res) => {
 exports.getRideDetails = async (req, res) => {
   try {
     const { id } = req.params;
-    const response = await axios.get(`${RIDE_BASE_URL}/${id}`, {
+    
+    const response = await axios.get(`${RIDE_BASE_URL}/${id}`,
+    {
       headers: { Authorization: req.headers.authorization }
     });
     res.json(response.data);
@@ -59,15 +62,51 @@ exports.getRideDetails = async (req, res) => {
 exports.payForRide = async (req, res) => {
   try {
     const { rideId } = req.params;
-    const response = await axios.post(`${RIDE_BASE_URL}/${rideId}/pay`, req.body, {
-      headers: { Authorization: req.headers.authorization }
-    });
+
+    const response = await axios.post(
+      `http://13.206.124.146:7000/api/rides/${rideId}/pay`,
+      req.body,
+      {
+        headers: { Authorization: req.headers.authorization },
+        timeout: 20000
+      }
+    );
+
     res.json(response.data);
+
   } catch (error) {
-    console.error("Pay Ride Error:", error.response?.data || error.message);
+
     res.status(500).json({
       success: false,
-      message: 'Ride payment failed',
+      message: "Ride payment failed",
+      error: error.response?.data || error.message
+    });
+  }
+};
+
+// ====================== CANCEL RIDE ======================
+exports.cancelRide = async (req, res) => {
+  try {
+    console.log("🔄 Cancel Ride Request - Body:", req.body);
+
+    const response = await axios.post(
+      'http://13.206.124.146:7000/api/rides/cancel',
+      req.body,
+      {
+        headers: {
+          Authorization: req.headers.authorization
+        }
+      }
+    );
+
+    res.json(response.data);
+
+  } catch (error) {
+    console.error("Cancel Ride Error:", error.response?.data || error.message);
+    
+    res.status(500).json({
+      success: false,
+      message: "Failed to cancel ride",
       error: error.response?.data || error.message
     });
   }
