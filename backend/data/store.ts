@@ -19,6 +19,16 @@ export async function connectDB() {
   }
 }
 
+export interface Payment {
+  id: string;
+  userId: string;
+  rideId: string;
+  amount: number;
+  method: string;
+  status: string;
+  createdAt: string;
+}
+
 // In-memory fallback
 export const memoryStore = {
   rides: [
@@ -50,7 +60,7 @@ export const memoryStore = {
     { id: '2', name: 'Rahul Sharma', email: 'driver@example.com', phone: '9999999999', role: 'driver', location: 'New Delhi', isVerified: true }
   ],
   otps: {} as Record<string, string>,
-  payments: [],
+  payments: [] as Payment[],
   feedbacks: [],
   complaints: [],
   addresses: [],

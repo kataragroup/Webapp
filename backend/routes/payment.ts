@@ -1,5 +1,5 @@
 import express from "express";
-import { memoryStore, db } from "../data/store";
+import { memoryStore, db, Payment } from "../data/store";
 import { requireAuth, AuthRequest } from "../middleware/auth";
 
 const router = express.Router();
@@ -11,7 +11,7 @@ router.post("/create", requireAuth, async (req: AuthRequest, res) => {
     return res.status(400).json({ success: false, message: "rideId, amount and paymentMethod are required" });
   }
 
-  const payment = {
+  const payment: Payment = {
     id: `P${Date.now()}${Math.floor(Math.random() * 1000)}`,
     userId: req.user.id,
     rideId,
