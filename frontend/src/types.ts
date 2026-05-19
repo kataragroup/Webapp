@@ -4,7 +4,7 @@ export interface User {
   name: string;
   email: string;
   phone: string;
-  role: 'user' | 'driver' | 'admin' | 'owner';
+  role: 'user' | 'driver' | 'owner';
   avatar?: string;
   location?: string;
   isVerified?: boolean;

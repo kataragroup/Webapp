@@ -4,7 +4,8 @@ class RideService {
   async getHistory(): Promise<Ride[]> {
     try {
       const response = await fetch('/api/rides');
-      return await response.json();
+      const data = await response.json();
+      return data?.data || [];
     } catch (error) {
       console.error("Failed to fetch rides", error);
       return [];
@@ -18,7 +19,8 @@ class RideService {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(rideData),
       });
-      return await response.json();
+      const data = await response.json();
+      return data?.data;
     } catch (error) {
       console.error("Failed to book ride", error);
       throw error;
@@ -27,9 +29,12 @@ class RideService {
 
   async getRideById(id: string): Promise<Ride | null> {
     try {
-      const response = await fetch(`/api/rides`);
-      const rides: Ride[] = await response.json();
-      return rides.find(r => r.id === id) || null;
+      const response = await fetch(`/api/rides/${id}`);
+      if (!response.ok) {
+        return null;
+      }
+      const data = await response.json();
+      return data?.data || null;
     } catch (error) {
       console.error("Failed to fetch ride details", error);
       return null;
@@ -46,7 +51,7 @@ class RideService {
 
   async updateStatus(id: string, status: string): Promise<void> {
     await fetch(`/api/rides/${id}/status`, {
-      method: 'POST',
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status })
     });

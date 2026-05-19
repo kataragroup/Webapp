@@ -41,4 +41,18 @@ router.post("/kyc/:id", async (req, res) => {
   res.json({ success: true });
 });
 
+router.get("/:id", async (req, res) => {
+  const userId = req.params.id;
+  let user = memoryStore.users.find((u) => u.id === userId);
+  if (!user && db) {
+    user = await db.collection("users").findOne({ id: userId });
+  }
+
+  if (!user) {
+    return res.status(404).json({ success: false, message: "Driver not found" });
+  }
+
+  return res.json({ success: true, data: user });
+});
+
 export default router;

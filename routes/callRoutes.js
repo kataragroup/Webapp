@@ -3,6 +3,6 @@ const router = express.Router();
 
 const { makeCall } = require("../controllers/callController");
 
-router.post("/call", makeCall);
+router.post("/", makeCall);
 
 module.exports = router;

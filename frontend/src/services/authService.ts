@@ -89,7 +89,7 @@ class AuthService {
     console.log(`Sending Login OTP to ${identifier}`);
     
     // Check if user exists
-    const collections = ['users', 'drivers', 'carOwners', 'admins'];
+    const collections = ['users', 'drivers', 'carOwners'];
     let userFound = false;
     
     for (const collName of collections) {
@@ -130,7 +130,7 @@ class AuthService {
   // --- END OTP METHODS ---
 
   private async syncUser(firebaseUser: FirebaseUser) {
-    const collections = ['users', 'drivers', 'carOwners', 'admins'];
+    const collections = ['users', 'drivers', 'carOwners'];
     for (const collName of collections) {
       const userDoc = await getDoc(doc(db, collName, firebaseUser.uid));
       if (userDoc.exists()) {
@@ -178,31 +178,14 @@ class AuthService {
 
   async login(email: string, password: string): Promise<User> {
     try {
-      // Special check for default admin to ensure it exists in Firestore for the demo
-      if (email === 'admin@system.node' && password === 'GoYatariUser@2025') {
-         const adminRef = doc(db, 'admins', 'system-admin-node');
-         const adminDoc = await getDoc(adminRef);
-         if (!adminDoc.exists()) {
-            await setDoc(adminRef, {
-              id: 'system-admin-node',
-              userId: 'system-admin-node',
-              name: 'System Administrator',
-              email: 'admin@system.node',
-              phone: '0000000000',
-              role: 'admin',
-              status: 'active',
-              createdAt: serverTimestamp()
-            });
-         }
-      }
+      const collections = ['users', 'drivers', 'carOwners'];
 
-      // Attempt to sign in
+      // Standard sign-in attempt
       try {
         const result = await signInWithEmailAndPassword(auth, email, password);
         const firebaseUser = result.user;
-        
-        // Try finding user in all collections
-        const collections = ['users', 'drivers', 'carOwners', 'admins'];
+
+        // Find profile by UID
         for (const collName of collections) {
           const userDoc = await getDoc(doc(db, collName, firebaseUser.uid));
           if (userDoc.exists()) {
@@ -211,48 +194,39 @@ class AuthService {
           }
         }
 
-        // Fallback: Search by email if UID lookup failed (common in prototype migrations)
+        // Fallback: find by email
         for (const collName of collections) {
           const q = query(collection(db, collName), where('email', '==', email));
           const snap = await getDocs(q);
           if (!snap.empty) {
             this.user = snap.docs[0].data() as User;
-            // Optionally update the doc ID to match Auth UID for future faster lookups
             return this.user;
           }
         }
+
         throw new Error('User profile not found in database.');
       } catch (authError: any) {
-        // Auto-repair for known credentials if OTP/Dev identity is assumed
-        // For Admin Login, we might want to check Firestore first anyway
+        // Repair path for prototype: if auth account missing but profile exists, try to re-create
         if (authError.code === 'auth/user-not-found' || authError.code === 'auth/invalid-credential' || authError.code === 'auth/wrong-password') {
-          const collections = ['users', 'drivers', 'carOwners', 'admins'];
           for (const collName of collections) {
             const collRef = collection(db, collName);
             const q = query(collRef, where('email', '==', email));
             const querySnapshot = await getDocs(q);
-            
+
             if (!querySnapshot.empty) {
               const foundUser = querySnapshot.docs[0].data();
-              // If we are here, the user exists in Firestore but auth failed.
-              // We'll try to re-create the auth account with the provided password if it was the default one
-              // or if it's the admin@system.node bypass
-              if (authError.code === 'auth/user-not-found' || authError.code === 'auth/invalid-credential' || authError.code === 'auth/wrong-password') {
-                try {
-                  await createUserWithEmailAndPassword(auth, email, password);
-                  this.user = foundUser as User;
-                  return this.user;
-                } catch (ce: any) {
-                   // If creation fails because user already exists, it really is a wrong password
-                   if (ce.code === 'auth/email-already-in-use') {
-                      // Attempt fallback password
-                      const otherPass = password === "GoYatariUser@2025" ? "defaultPassword123" : "GoYatariUser@2025";
-                      try {
-                        await signInWithEmailAndPassword(auth, email, otherPass);
-                        this.user = foundUser as User;
-                        return this.user;
-                      } catch (se) {}
-                   }
+              try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                this.user = foundUser as User;
+                return this.user;
+              } catch (ce: any) {
+                if (ce.code === 'auth/email-already-in-use') {
+                  const otherPass = password === 'GoYatariUser@2025' ? 'defaultPassword123' : 'GoYatariUser@2025';
+                  try {
+                    await signInWithEmailAndPassword(auth, email, otherPass);
+                    this.user = foundUser as User;
+                    return this.user;
+                  } catch (se) {}
                 }
               }
             }
@@ -271,7 +245,7 @@ class AuthService {
 
   async loginByEmailOrPhone(identifier: string): Promise<User> {
     try {
-      const collections = ['users', 'drivers', 'carOwners', 'admins'];
+      const collections = ['users', 'drivers', 'carOwners'];
       let foundUser: any = null;
       let userColl: string = '';
       
@@ -435,7 +409,6 @@ class AuthService {
     switch (role) {
       case 'driver': return 'drivers';
       case 'owner': return 'carOwners';
-      case 'admin': return 'admins';
       default: return 'users';
     }
   }

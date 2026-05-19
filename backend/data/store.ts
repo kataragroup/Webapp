@@ -47,10 +47,18 @@ export const memoryStore = {
   },
   users: [
     { id: '1', name: 'Prathama Verma', email: 'user@example.com', phone: '9876543210', role: 'user' },
-    { id: '2', name: 'Rahul Sharma', email: 'driver@example.com', phone: '9999999999', role: 'driver', location: 'New Delhi', isVerified: true },
-    { id: '3', name: 'Super Admin', email: 'admin@example.com', role: 'admin' }
+    { id: '2', name: 'Rahul Sharma', email: 'driver@example.com', phone: '9999999999', role: 'driver', location: 'New Delhi', isVerified: true }
   ],
   otps: {} as Record<string, string>,
+  payments: [],
+  feedbacks: [],
+  complaints: [],
+  addresses: [],
+  wallets: [
+    { userId: '1', balance: 1000, updatedAt: new Date().toISOString() },
+    { userId: '2', balance: 500, updatedAt: new Date().toISOString() }
+  ],
+  walletTransactions: [],
   driverPositions: [
     { id: '2', lat: 28.6139, lng: 77.2090, name: 'Rahul Sharma', rating: 4.8, vehicle: 'Maruti Suzuki Dzire', status: 'available' },
     { id: 'd2', lat: 28.6250, lng: 77.2200, name: 'Amit Kumar', rating: 4.9, vehicle: 'Hyundai Xcent', status: 'available' },

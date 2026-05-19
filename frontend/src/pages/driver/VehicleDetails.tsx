@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Car, Camera, Check } from 'lucide-react';
 import { motion } from 'motion/react';
+import { cn } from '../../lib/utils';
 
 const VEHICLE_TYPES = [
   { id: 'mini', label: 'Mini', icon: '🚗' },

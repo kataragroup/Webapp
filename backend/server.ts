@@ -6,9 +6,13 @@ import { connectDB, db } from "./data/store";
 
 // Import Routes
 import authRoutes from "./routes/auth";
-import adminRoutes from "./routes/admin";
 import driverRoutes from "./routes/driver";
 import rideRoutes from "./routes/ride";
+import paymentRoutes from "./routes/payment";
+import feedbackRoutes from "./routes/feedback";
+import complaintRoutes from "./routes/complaint";
+import addressRoutes from "./routes/address";
+import walletRoutes from "./routes/wallet";
 
 async function startServer() {
   await connectDB();
@@ -29,9 +33,13 @@ async function startServer() {
 
   // Register Modules
   app.use("/api/auth", authRoutes);
-  app.use("/api/admin", adminRoutes);
   app.use("/api/drivers", driverRoutes);
   app.use("/api/rides", rideRoutes);
+  app.use("/api/payment", paymentRoutes);
+  app.use("/api/feedback", feedbackRoutes);
+  app.use("/api/complaints", complaintRoutes);
+  app.use("/api/address", addressRoutes);
+  app.use("/api/wallet", walletRoutes);
 
   // --- VITE MIDDLEWARE ---
   if (process.env.NODE_ENV !== "production") {

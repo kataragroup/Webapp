@@ -5,7 +5,12 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const Admin = require("./models/Admin");
 
-mongoose.connect(process.env.MONGO_URI);
+const uri = process.env.MONGO_URI || process.env.MONGODB_URI;
+if (!uri) {
+  console.error('MONGO_URI or MONGODB_URI not set');
+  process.exit(1);
+}
+mongoose.connect(uri);
 
 (async () => {
   const hash = await bcrypt.hash("kataragroup#@!", 10);

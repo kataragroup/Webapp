@@ -30,13 +30,6 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean, onClose: () => v
           { icon: User, label: 'Drivers', path: '/owner' },
           { icon: CreditCard, label: 'Earnings', path: '/owner' },
         ];
-      case 'admin':
-        return [
-          { icon: Home, label: 'Core', path: '/admin' },
-          { icon: Shield, label: 'Security', path: '/admin/kyc' },
-          { icon: BarChart3, label: 'Analytics', path: '/admin/earnings' },
-          { icon: Settings, label: 'Settings', path: '/admin/settings' },
-        ];
       default:
         return [
           { icon: Home, label: 'Home', path: '/user' },

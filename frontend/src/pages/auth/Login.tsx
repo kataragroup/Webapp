@@ -54,7 +54,6 @@ export default function Login() {
         const user = await authService.loginByEmailOrPhone(identifier);
         if (user.role === 'owner') navigate('/owner');
         else if (user.role === 'driver') navigate('/driver');
-        else if (user.role === 'admin') navigate('/admin');
         else navigate('/user');
       } else {
         setError('Invalid OTP code.');

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Upload, CheckCircle, ShieldCheck, Lock, Eye, AlertCircle, RefreshCw, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Upload, CheckCircle, ShieldCheck, Lock, Eye, AlertCircle, RefreshCw, ArrowRight, Fingerprint } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../../lib/utils';
 

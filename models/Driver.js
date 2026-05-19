@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const mongoose = require("mongoose");
 
 const driverSchema = new mongoose.Schema(
@@ -9,7 +8,7 @@ const driverSchema = new mongoose.Schema(
 
     // ── AUTH ──
     isVerified: { type: Boolean, default: false },
-    otpCode:    { type: String, default: null }, // Plain text for better reliability
+    otpCode:    { type: String, default: null },
     otpExpiresAt: { type: Date, default: null },
     otpLastSentAt: { type: Date, default: null },
     otpSendCount: { type: Number, default: 0 },
@@ -18,10 +17,10 @@ const driverSchema = new mongoose.Schema(
 
     // ── KYC ──
     isKycComplete: { type: Boolean, default: false },
-    driverType: { 
-      type: String, 
-      enum: ["Owner_driver", "Freelance_driver", null], 
-      default: null 
+    driverType: {
+      type: String,
+      enum: ["Owner_driver", "Freelance_driver", null],
+      default: null,
     },
 
     // ── ONLINE STATUS ──
@@ -53,49 +52,4 @@ driverSchema.set("toJSON", {
 });
 
 module.exports = mongoose.model("Driver", driverSchema);
-=======
-// models/Driver.js
-const mongoose = require('mongoose');
 
-const driverSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-
-  phone: {
-    type: String,
-    required: true,
-    unique: true,
-    index: true
-  },
-
-  licenseNumber: {
-    type: String,
-    required: true
-  },
-
-  licensePhoto: String,
-  driverPhoto: String,
-
-  vehicleId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Vehicle'
-  },
-
-  ownerId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'CarOwner',
-    required: true
-  },
-
-  verificationStatus: {
-    type: String,
-    enum: ['pending', 'approved', 'rejected'],
-    default: 'pending'
-  }
-
-}, { timestamps: true });
-
-module.exports = mongoose.model('Driver', driverSchema);
->>>>>>> e3152cd0b4bd64a3e0d1c4daa0d8f02cad52ca6d

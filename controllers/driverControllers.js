@@ -1,11 +1,11 @@
-const Driver = require("../models/Driver");
+﻿const Driver = require("../models/Driver");
 
 // ─── GO ONLINE ────────────────────────────────────────────────────────────────
 // POST /api/driver/go-online  { lat, lng }
 // Auth: Bearer token required (driverId comes from token, not body)
 exports.goOnline = async (req, res) => {
   try {
-    const driverId = req.driver?._id || req.user?._id; // from authMiddleware
+    const driverId = req.driver?._id || req.user?._id;
     let { lat, lng } = req.body;
 
     if (!driverId) {
@@ -36,25 +36,18 @@ exports.goOnline = async (req, res) => {
       return res.status(404).json({ success: false, message: "Driver not found" });
     }
 
-    // Emit socket event
     const io = req.app.get("io");
     if (io) {
       io.emit("driver-status", { driverId: driver._id, isOnline: true });
     }
 
-    return res.json({
-      success: true,
-      message: "Driver is now ONLINE",
-      data:    driver,
-    });
+    return res.json({ success: true, message: "Driver is now ONLINE", data: driver });
   } catch (err) {
     console.error("❌ goOnline error:", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
-// ─── GO OFFLINE ───────────────────────────────────────────────────────────────
-// POST /api/driver/go-offline
 exports.goOffline = async (req, res) => {
   try {
     const driverId = req.driver?._id || req.user?._id;
@@ -78,20 +71,13 @@ exports.goOffline = async (req, res) => {
       io.emit("driver-status", { driverId: driver._id, isOnline: false });
     }
 
-    return res.json({
-      success: true,
-      message: "Driver is now OFFLINE",
-      data:    driver,
-    });
+    return res.json({ success: true, message: "Driver is now OFFLINE", data: driver });
   } catch (err) {
     console.error("❌ goOffline error:", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
-// ─── GET PROFILE ──────────────────────────────────────────────────────────────
-// GET /api/driver/profile
-// Auth: Bearer token required
 exports.getProfile = async (req, res) => {
   try {
     const driverId = req.driver?._id || req.user?._id;
@@ -113,8 +99,6 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// ─── UPDATE LOCATION ─────────────────────────────────────────────────────────
-// POST /api/driver/update-location  { lat, lng }
 exports.updateLocation = async (req, res) => {
   try {
     const driverId = req.driver?._id || req.user?._id;
@@ -130,6 +114,10 @@ exports.updateLocation = async (req, res) => {
     lat = Number(lat);
     lng = Number(lng);
 
+    if (isNaN(lat) || isNaN(lng)) {
+      return res.status(400).json({ success: false, message: "lat and lng must be numbers" });
+    }
+
     const driver = await Driver.findByIdAndUpdate(
       driverId,
       {
@@ -143,7 +131,6 @@ exports.updateLocation = async (req, res) => {
       return res.status(404).json({ success: false, message: "Driver not found" });
     }
 
-    // Emit real-time location to admin/passengers
     const io = req.app.get("io");
     if (io) {
       io.emit("driver-location", {
@@ -161,8 +148,6 @@ exports.updateLocation = async (req, res) => {
   }
 };
 
-// ─── UPDATE DRIVER TYPE ──────────────────────────────────────────────────────
-// PUT /api/driver/type  { driverType: "Owner_driver" | "Freelance_driver" }
 exports.updateDriverType = async (req, res) => {
   try {
     const driverId = req.driver?._id || req.user?._id;
@@ -192,6 +177,43 @@ exports.updateDriverType = async (req, res) => {
     });
   } catch (err) {
     console.error("❌ updateDriverType error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.getNearbyDrivers = async (req, res) => {
+  try {
+    const { lat, lng, radius = 5000 } = req.query;
+    if (!lat || !lng) {
+      return res.status(400).json({ success: false, message: "lat and lng query parameters are required" });
+    }
+
+    const drivers = await Driver.find({
+      isOnline: true,
+      location: {
+        $nearSphere: {
+          $geometry: { type: "Point", coordinates: [Number(lng), Number(lat)] },
+          $maxDistance: Number(radius),
+        },
+      },
+    }).select("-otpCode -otpExpiresAt -otpLastSentAt -otpSendCount -otpVerifyAttempts -otpLockedUntil");
+
+    return res.json({ success: true, count: drivers.length, data: drivers });
+  } catch (err) {
+    console.error("❌ getNearbyDrivers error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.getDriverById = async (req, res) => {
+  try {
+    const driver = await Driver.findById(req.params.driverId).select("-otpCode -otpExpiresAt -otpLastSentAt -otpSendCount -otpVerifyAttempts -otpLockedUntil");
+    if (!driver) {
+      return res.status(404).json({ success: false, message: "Driver not found" });
+    }
+    return res.json({ success: true, data: driver });
+  } catch (err) {
+    console.error("❌ getDriverById error:", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };

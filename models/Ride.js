@@ -28,6 +28,7 @@ const rideSchema = new mongoose.Schema({
     coordinates: [Number]
   },
 
+  vehicleType: String,
   distance: Number,
   duration: Number,
 

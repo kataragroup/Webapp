@@ -10,18 +10,18 @@ import SplashScreen from './pages/auth/SplashScreen';
 import Login from './pages/auth/Login';
 import SignUp from './pages/auth/SignUp';
 import SessionExpired from './pages/auth/SessionExpired';
-import UserDashboard from './pages/user/Dashboard';
-import RideSelection from './pages/user/RideSelection';
-import RideDetails from './pages/user/RideDetails';
-import Payment from './pages/user/Payment';
-import Wallet from './pages/user/Wallet';
-import Feedback from './pages/user/Feedback';
-import Profile from './pages/user/Profile';
-import Settings from './pages/user/Settings';
-import AddressBook from './pages/user/AddressBook';
-import BookingConfirmation from './pages/user/BookingConfirmation';
-import Complaint from './pages/user/Complaint';
-import RideHistoryPage from './pages/user/RideHistory';
+import UserDashboard from './user/pages/Dashboard';
+import RideSelection from './user/pages/RideSelection';
+import RideDetails from './user/pages/RideDetails';
+import Payment from './user/pages/Payment';
+import Wallet from './user/pages/Wallet';
+import Feedback from './user/pages/Feedback';
+import Profile from './user/pages/Profile';
+import Settings from './user/pages/Settings';
+import AddressBook from './user/pages/AddressBook';
+import BookingConfirmation from './user/pages/BookingConfirmation';
+import Complaint from './user/pages/Complaint';
+import RideHistoryPage from './user/pages/RideHistory';
 import DriverDashboard from './pages/driver/Dashboard';
 import DriverWallet from './pages/driver/Wallet';
 import KYCList from './pages/driver/KYCList';
@@ -35,19 +35,6 @@ import DriverSupport from './pages/driver/Support';
 import DriverLogin from './pages/driver/DriverLogin';
 import DriverSignUp from './pages/driver/DriverSignUp';
 import OwnerLogin from './pages/owner/OwnerLogin';
-import AdminDashboard from './pages/admin/Dashboard';
-import AdminUsers from './pages/admin/AdminUsers';
-import AdminDrivers from './pages/admin/AdminDrivers';
-import AdminKYC from './pages/admin/AdminKYC';
-import AdminLogin from './pages/admin/AdminLogin';
-import AdminRides from './pages/admin/AdminRides';
-import AdminTracking from './pages/admin/AdminTracking';
-import AdminPayments from './pages/admin/AdminPayments';
-import AdminEarnings from './pages/admin/AdminEarnings';
-import AdminIncentives from './pages/admin/AdminIncentives';
-import AdminReports from './pages/admin/AdminReports';
-import AdminNotifications from './pages/admin/AdminNotifications';
-import AdminSupport from './pages/admin/AdminSupport';
 import OwnerDashboard from './pages/owner/Dashboard';
 import OwnerKYC from './pages/owner/KYC';
 import OwnerVehicles from './pages/owner/Vehicles';
@@ -55,18 +42,16 @@ import OwnerVehicles from './pages/owner/Vehicles';
 import { authService } from './services/authService';
 
 // --- PROTECTED ROUTE COMPONENT ---
-function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: 'user' | 'driver' | 'admin' | 'owner' }) {
+function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: 'user' | 'driver' | 'owner' }) {
   const user = authService.getCurrentUser();
   
   if (!user) {
-    if (role === 'admin') return <Navigate to="/admin/login" replace />;
     if (role === 'driver') return <Navigate to="/driver/login" replace />;
     if (role === 'owner') return <Navigate to="/owner/login" replace />;
     return <Navigate to="/login" replace />;
   }
 
   if (role && user.role !== role) {
-    if (user.role === 'admin') return <Navigate to="/admin" replace />;
     if (user.role === 'driver') return <Navigate to="/driver" replace />;
     if (user.role === 'owner') return <Navigate to="/owner" replace />;
     return <Navigate to="/user" replace />;
@@ -80,7 +65,6 @@ function DashboardRedirect() {
   const user = authService.getCurrentUser();
   if (!user) return <Navigate to="/login" replace />;
   
-  if (user.role === 'admin') return <Navigate to="/admin" replace />;
   if (user.role === 'driver') return <Navigate to="/driver" replace />;
   if (user.role === 'owner') return <Navigate to="/owner" replace />;
   return <Navigate to="/user" replace />;
@@ -101,22 +85,6 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        {/* Admin Routes - Bypassing Mobile Container for full desktop experience */}
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/admin/users" element={<ProtectedRoute role="admin"><AdminUsers /></ProtectedRoute>} />
-        <Route path="/admin/drivers" element={<ProtectedRoute role="admin"><AdminDrivers /></ProtectedRoute>} />
-        <Route path="/admin/kyc" element={<ProtectedRoute role="admin"><AdminKYC /></ProtectedRoute>} />
-        <Route path="/admin/rides" element={<ProtectedRoute role="admin"><AdminRides /></ProtectedRoute>} />
-        <Route path="/admin/tracking" element={<ProtectedRoute role="admin"><AdminTracking /></ProtectedRoute>} />
-        <Route path="/admin/payments" element={<ProtectedRoute role="admin"><AdminPayments /></ProtectedRoute>} />
-        <Route path="/admin/earnings" element={<ProtectedRoute role="admin"><AdminEarnings /></ProtectedRoute>} />
-        <Route path="/admin/incentives" element={<ProtectedRoute role="admin"><AdminIncentives /></ProtectedRoute>} />
-        <Route path="/admin/reports" element={<ProtectedRoute role="admin"><AdminReports /></ProtectedRoute>} />
-        <Route path="/admin/notifications" element={<ProtectedRoute role="admin"><AdminNotifications /></ProtectedRoute>} />
-        <Route path="/admin/support" element={<ProtectedRoute role="admin"><AdminSupport /></ProtectedRoute>} />
-        <Route path="/admin/settings" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
-
         {/* Global Dashboard Redirect */}
         <Route path="/dashboard" element={<DashboardRedirect />} />
 

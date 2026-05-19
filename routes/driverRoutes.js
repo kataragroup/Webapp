@@ -1,4 +1,4 @@
-const express = require("express");
+﻿const express = require("express");
 const router  = express.Router();
 
 const authMiddleware = require("../middlewares/authMiddleware");
@@ -8,9 +8,12 @@ const {
   getProfile,
   updateLocation,
   updateDriverType,
+  getNearbyDrivers,
+  getDriverById,
 } = require("../controllers/driverControllers");
 
-// All driver routes are protected — driver must be logged in
+router.get("/nearby", getNearbyDrivers);
+router.get("/:driverId", getDriverById);
 router.post("/go-online",        authMiddleware, goOnline);
 router.post("/go-offline",       authMiddleware, goOffline);
 router.post("/update-location",  authMiddleware, updateLocation);

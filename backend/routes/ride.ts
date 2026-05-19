@@ -7,18 +7,21 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   if (db) {
     const rides = await db.collection("rides").find().toArray();
-    res.json(rides.map((r: any) => ({ ...r, id: r.id || r._id.toString() })));
+    const mappedRides = rides.map((r: any) => ({ ...r, id: r.id || r._id.toString() }));
+    res.json({ success: true, count: mappedRides.length, data: mappedRides });
   } else {
-    res.json(memoryStore.rides);
+    res.json({ success: true, count: memoryStore.rides.length, data: memoryStore.rides });
   }
 });
 
 router.post("/", async (req, res) => {
   const newRide = { 
+    id: `R${Date.now()}${Math.floor(Math.random() * 1000)}`,
     ...req.body, 
     date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     status: 'confirmed',
+    paymentStatus: 'pending',
     pickupCode: Math.floor(1000 + Math.random() * 9000).toString(),
     driverDetails: {
       name: 'Rahul Sharma',
@@ -31,11 +34,13 @@ router.post("/", async (req, res) => {
 
   if (db) {
     const result = await db.collection("rides").insertOne(newRide);
-    res.status(201).json({ ...newRide, id: result.insertedId });
+    const storedRide = { ...newRide, id: result.insertedId.toString() };
+    await db.collection("rides").updateOne({ _id: result.insertedId }, { $set: { id: storedRide.id } });
+    res.status(201).json({ success: true, data: storedRide });
   } else {
     const rideWithId = { ...newRide, id: `R${Math.random().toString(36).substr(2, 9)}` };
     memoryStore.rides.unshift(rideWithId);
-    res.status(201).json(rideWithId);
+    res.status(201).json({ success: true, data: rideWithId });
   }
 });
 
@@ -44,8 +49,12 @@ router.post("/:id/accept", async (req, res) => {
   const rideId = req.params.id;
 
   if (db) {
+     const query: any = { $or: [{ id: rideId }] };
+     if (ObjectId.isValid(rideId)) {
+       query.$or.push({ _id: new ObjectId(rideId) });
+     }
      await db.collection("rides").updateOne(
-       { _id: new ObjectId(rideId) },
+       query,
        { $set: { status: 'confirmed', driverId, driverDetails } }
      );
   } else {
@@ -59,22 +68,39 @@ router.post("/:id/accept", async (req, res) => {
   res.json({ success: true });
 });
 
-router.post("/:id/status", async (req, res) => {
+router.get("/:id", async (req, res) => {
+  const rideId = req.params.id;
+  let ride = memoryStore.rides.find((r) => r.id === rideId);
+
+  if (!ride && db) {
+    const query: any = { $or: [{ id: rideId }] };
+    if (ObjectId.isValid(rideId)) {
+      query.$or.push({ _id: new ObjectId(rideId) });
+    }
+    const result = await db.collection("rides").findOne(query);
+    ride = result || null;
+  }
+
+  if (!ride) {
+    return res.status(404).json({ success: false, message: "Ride not found" });
+  }
+
+  return res.json({ success: true, data: ride });
+});
+
+router.patch("/:id/status", async (req, res) => {
   const { status } = req.body;
   const rideId = req.params.id;
 
   if (db) {
-     try {
-       await db.collection("rides").updateOne(
-         { _id: new ObjectId(rideId) },
-         { $set: { status } }
-       );
-     } catch (e) {
-       await db.collection("rides").updateOne(
-         { id: rideId },
-         { $set: { status } }
-       );
+     const query: any = { $or: [{ id: rideId }] };
+     if (ObjectId.isValid(rideId)) {
+       query.$or.push({ _id: new ObjectId(rideId) });
      }
+     await db.collection("rides").updateOne(
+       query,
+       { $set: { status } }
+     );
   } else {
      const ride = memoryStore.rides.find(r => r.id === rideId);
      if (ride) {
